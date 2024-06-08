@@ -1,25 +1,32 @@
 pipeline {
-    agent {
-        node any
-    }
+    agent any
 
     stages {
         stage('Build Image') {
             when {
-                branch 'master'  //only run these steps on the master branch
+                branch 'master'  // Only run this stage on the master branch
             }
-
-            // Jenkins Stage to Build the Docker Image
-
+            steps {
+                script {
+                    // Build Docker image using the Dockerfile in the root directory with a proper tag
+                    def image = docker.build('my_image:latest')
+                }
+            }
         }
 
         stage('Publish Image') {
             when {
-                branch 'master'  //only run these steps on the master branch
+                branch 'master'  // Only run this stage on the master branch
             }
-            
-            // Jenkins Stage to Publish the Docker Image to Dockerhub or any Docker repository of your choice.
-
+            steps {
+                script {
+                    // Log in to Docker Hub (replace 'dockerhub_credentials' with your actual credentials ID)
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') {
+                        // Push the Docker image to Docker Hub with the correct image name and tag
+                        docker.image('my_image:latest').push()
+                    }
+                }
+            }
         }
     }
 }
