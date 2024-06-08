@@ -1,27 +1,25 @@
-
 pipeline {
-    agent any
+    agent {
+        node any
+    }
 
     stages {
         stage('Build Image') {
-            steps {
-                script {
-                    // Build Docker image using a valid image name and tag
-                    def image = docker.build('-sklearn_website:v1')
-                }
+            when {
+                branch 'master'  //only run these steps on the master branch
             }
+
+            // Jenkins Stage to Build the Docker Image
+
         }
 
         stage('Publish Image') {
-            steps {
-                script {
-                    // Log in to Docker Hub (replace 'dockerhub_credentials' with your actual credentials ID)
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') {
-                        // Push the Docker image to Docker Hub with the correct image name and tag
-                        docker.image('-sklearn_website:v1').push()
-                    }
-                }
+            when {
+                branch 'master'  //only run these steps on the master branch
             }
+            
+            // Jenkins Stage to Publish the Docker Image to Dockerhub or any Docker repository of your choice.
+
         }
     }
 }
