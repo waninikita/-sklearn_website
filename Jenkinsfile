@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -5,7 +6,7 @@ pipeline {
         stage('Build Image') {
             steps {
                 script {
-                    // Build Docker image using the Dockerfile in the root directory with a proper tag
+                    // Build Docker image using a valid image name and tag
                     def image = docker.build('-sklearn_website:v1')
                 }
             }
@@ -14,8 +15,8 @@ pipeline {
         stage('Publish Image') {
             steps {
                 script {
-                    // Log in to Docker Hub ('dockerhub_credentials' is your actual credentials ID)
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
+                    // Log in to Docker Hub (replace 'dockerhub_credentials' with your actual credentials ID)
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') {
                         // Push the Docker image to Docker Hub with the correct image name and tag
                         docker.image('-sklearn_website:v1').push()
                     }
