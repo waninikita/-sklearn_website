@@ -1,24 +1,26 @@
-#!/usr/bin/env groovy
 pipeline {
-    agent {
-        node any
-    }
-
-   stage('Build Image') {
-    // when {
-    //     branch 'master'  //only run these steps on the master branch
-    // }
-    // Jenkins Stage to Build the Docker Image
-}
-
-
+    agent any
+    
+    stages {
+        stage('Build Image') {
+            steps {
+                script {
+                    // Build Docker image using the Dockerfile
+                    docker.build('my_image_name')
+                }
+            }
+        }
+        
         stage('Publish Image') {
-          //  when {
-          //      branch 'master'  //only run these steps on the master branch
-          //  }
-            
-            // Jenkins Stage to Publish the Docker Image to Dockerhub or any Docker repository of your choice.
-
+            steps {
+                script {
+                    // Log in to Docker Hub
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') {
+                        // Push the Docker image to Docker Hub
+                        docker.image('my_image_name').push('latest')
+                    }
+                }
+            }
         }
     }
 }
