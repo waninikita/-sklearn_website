@@ -15,7 +15,7 @@ pipeline {
             steps {
                 script {
                     // Log in to Docker Hub ('dockerhub_credentials' is your actual credentials ID)
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
                         // Push the Docker image to Docker Hub with the correct image name and tag
                         docker.image('-sklearn_website:v1').push()
                     }
