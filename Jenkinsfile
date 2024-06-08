@@ -16,9 +16,8 @@ pipeline {
                 script {
                     // Log in to Docker Hub (replace 'dockerhub_credentials' with your actual credentials ID)
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') {
-                        // Push the Docker image to Docker Hub with the correct image name and tag
-                        def image = docker.image('nikita617/docker_image:latest')
-                        image.push()
+                        // Push the Docker image to Docker Hub
+                        image.push('latest')
                     }
                 }
             }
