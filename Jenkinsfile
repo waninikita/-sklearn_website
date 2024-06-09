@@ -1,25 +1,47 @@
 pipeline {
     agent any
-
+    
     stages {
-        stage('Build Image') {
+        stage('Download code from GitHub') {
             steps {
-                // Jenkins Stage to Build the Docker Image
+                git "https://github.com/waninikita/-sklearn_website.git"
+            }
+        }
+        
+        stage('Build Docker image') {
+            steps {
                 script {
-                    // Build Docker image using the Dockerfile named 'Dockerfile'
-                    docker.build('Dockerfile')
+                    try {
+                        sh "docker build -t nikita617/nmp_jenkins:1 . --load"
+                    } catch (Exception e) {
+                        error "Failed to build Docker image: ${e.message}"
+                    }
                 }
             }
         }
-
-        stage('Publish Image') {
+        
+        stage('Docker login') {
             steps {
-                // Jenkins Stage to Publish the Docker Image to Dockerhub or any Docker repository of your choice.
                 script {
-                    // Log in to Docker Hub (replace 'username', 'password', and 'email' with your Docker Hub credentials)
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') {
-                        // Push the Docker image to Docker Hub
-                        docker.image('my_image_name').push('latest')
+                    try {
+                        withCredentials([usernamePassword(credentialsId: 'docker_hub_login', passwordVariable: 'xyz', usernameVariable: 'nmp')]) {
+                            sh "docker logout"
+                            sh "echo ${xyz} | docker login -u ${nmp} --password-stdin"
+                        }
+                    } catch (Exception e) {
+                        error "Failed to login to DockerHub: ${e.message}"
+                    }
+                }
+            }
+        }
+        
+        stage('Push image to DockerHub') {
+            steps {
+                script {
+                    try {
+                        sh "docker push nikita617/nmp_jenkins:1"
+                    } catch (Exception e) {
+                        error "Failed to push Docker image to DockerHub: ${e.message}"
                     }
                 }
             }
